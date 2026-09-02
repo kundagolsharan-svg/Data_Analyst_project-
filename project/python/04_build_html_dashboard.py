@@ -24,7 +24,6 @@ html_content = f'''<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root {{
     --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -34,9 +33,9 @@ html_content = f'''<!DOCTYPE html>
     --bg-base: #0B0F19;
     --bg-surface: #111827;
     --bg-surface-elevated: #1F2937;
-    --bg-card: rgba(17, 24, 39, 0.75);
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-subtle: rgba(255, 255, 255, 0.04);
+    --bg-card: rgba(17, 24, 39, 0.85);
+    --border-color: rgba(255, 255, 255, 0.09);
+    --border-subtle: rgba(255, 255, 255, 0.05);
     
     --text-primary: #F9FAFB;
     --text-secondary: #9CA3AF;
@@ -66,7 +65,7 @@ html_content = f'''<!DOCTYPE html>
     --bg-base: #F8FAFC;
     --bg-surface: #FFFFFF;
     --bg-surface-elevated: #F1F5F9;
-    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card: rgba(255, 255, 255, 0.95);
     --border-color: #E2E8F0;
     --border-subtle: #F1F5F9;
     
@@ -131,16 +130,16 @@ html_content = f'''<!DOCTYPE html>
   }}
 
   .brand-logo {{
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     background: linear-gradient(135deg, #F2C811, #F4A261, #E76F51);
-    border-radius: 8px;
+    border-radius: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #1A1A1A;
     font-weight: 800;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     box-shadow: 0 4px 12px rgba(242, 200, 17, 0.35);
   }}
 
@@ -157,6 +156,7 @@ html_content = f'''<!DOCTYPE html>
     display: flex;
     align-items: center;
     gap: 6px;
+    margin-top: 2px;
   }}
 
   .badge-pbi {{
@@ -422,13 +422,6 @@ html_content = f'''<!DOCTYPE html>
     margin-bottom: 20px;
   }}
 
-  .visual-grid-3 {{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin-bottom: 20px;
-  }}
-
   .visual-grid-2 {{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -445,6 +438,7 @@ html_content = f'''<!DOCTYPE html>
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
+    min-height: 380px;
   }}
 
   .visual-header {{
@@ -469,18 +463,51 @@ html_content = f'''<!DOCTYPE html>
     margin-top: 2px;
   }}
 
-  .visual-chart-container {{
+  .chart-box {{
     position: relative;
     flex: 1;
-    min-height: 280px;
-    max-height: 360px;
     width: 100%;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }}
+
+  canvas.native-chart {{
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }}
+
+  /* Tooltip overlay */
+  .chart-tooltip {{
+    position: absolute;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--border-color);
+    color: #F8FAFC;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    pointer-events: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 50;
+    white-space: nowrap;
+  }}
+
+  [data-theme="light"] .chart-tooltip {{
+    background: rgba(255, 255, 255, 0.96);
+    color: #0F172A;
+    border-color: #CBD5E1;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
   }}
 
   /* Custom Data Tables & Matrices */
   .table-responsive {{
     width: 100%;
     overflow-x: auto;
+    flex: 1;
   }}
 
   table.pbi-table {{
@@ -519,7 +546,7 @@ html_content = f'''<!DOCTYPE html>
   }}
 
   table.pbi-table tr:hover td {{
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(59, 130, 246, 0.06);
   }}
 
   .num-cell {{
@@ -645,9 +672,33 @@ html_content = f'''<!DOCTYPE html>
     border-color: var(--primary);
   }}
 
+  /* Donut Legend */
+  .donut-legend {{
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }}
+
+  .legend-item {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }}
+
+  .legend-dot {{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }}
+
   /* Responsive Design */
   @media (max-width: 1200px) {{
-    .visual-grid-2-1, .visual-grid-3, .visual-grid-2 {{
+    .visual-grid-2-1, .visual-grid-2 {{
       grid-template-columns: 1fr;
     }}
   }}
@@ -672,6 +723,8 @@ html_content = f'''<!DOCTYPE html>
 </style>
 </head>
 <body>
+
+<div id="chartTooltip" class="chart-tooltip"></div>
 
 <header class="app-header">
   <div class="brand">
@@ -797,8 +850,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Time Intelligence (DATEADD -1 Month & Monthly Run Rate)</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="monthlyTrendChart"></canvas>
+        <div class="chart-box" id="monthlyTrendBox">
+          <canvas id="monthlyTrendCanvas" class="native-chart"></canvas>
         </div>
       </div>
 
@@ -809,8 +862,9 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Contribution % across Product Verticals</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="categoryDonutChart"></canvas>
+        <div class="chart-box" id="categoryDonutBox" style="flex-direction:column;">
+          <canvas id="categoryDonutCanvas" class="native-chart" style="max-height:220px;"></canvas>
+          <div class="donut-legend" id="categoryLegend"></div>
         </div>
       </div>
     </div>
@@ -823,8 +877,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Regional Performance Clustered Comparison</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="regionBarChart"></canvas>
+        <div class="chart-box" id="regionBarBox">
+          <canvas id="regionBarCanvas" class="native-chart"></canvas>
         </div>
       </div>
 
@@ -835,7 +889,7 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Instant Transaction Inspector</div>
           </div>
         </div>
-        <div class="table-responsive" style="max-height: 300px;">
+        <div class="table-responsive" style="max-height: 290px;">
           <table class="pbi-table" id="topOrdersTable">
             <thead>
               <tr>
@@ -891,8 +945,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Filter visual to Product Revenue Rank ≤ 10</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="productRankChart"></canvas>
+        <div class="chart-box" id="productRankBox">
+          <canvas id="productRankCanvas" class="native-chart"></canvas>
         </div>
       </div>
 
@@ -903,8 +957,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Demonstrates discount margin erosion & volume trade-offs</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="discountScatterChart"></canvas>
+        <div class="chart-box" id="discountScatterBox">
+          <canvas id="discountScatterCanvas" class="native-chart"></canvas>
         </div>
       </div>
     </div>
@@ -972,8 +1026,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Orders by ShipMode vs. Average Days to Ship</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="shipModeChart"></canvas>
+        <div class="chart-box" id="shipModeBox">
+          <canvas id="shipModeCanvas" class="native-chart"></canvas>
         </div>
       </div>
 
@@ -984,8 +1038,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="visual-subtitle">Regional efficiency breakdown</div>
           </div>
         </div>
-        <div class="visual-chart-container">
-          <canvas id="regionalMarginChart"></canvas>
+        <div class="chart-box" id="regionalMarginBox">
+          <canvas id="regionalMarginCanvas" class="native-chart"></canvas>
         </div>
       </div>
     </div>
@@ -1114,7 +1168,7 @@ RANKX(ALL(sales_data_cleaned[Product]), [Total Revenue], , DESC)</pre>
 
 <script>
 /* =============================================================================
-   INLINE DATASET & STATE ENGINE (2,018 CLEANED RECORDS)
+   STANDALONE DATASET & ZERO-DEPENDENCY NATIVE CANVAS / SVG CHART ENGINE
    ============================================================================= */
 const rawData = {data_json};
 
@@ -1126,15 +1180,756 @@ let state = {{
   filteredData: [...rawData]
 }};
 
-// Chart Instances
-let charts = {{}};
-
 /* Helper formatters */
 const fmtCur = (num) => '$' + Number(num || 0).toLocaleString('en-US', {{ minimumFractionDigits: 2, maximumFractionDigits: 2 }});
 const fmtInt = (num) => Number(num || 0).toLocaleString('en-US');
 const fmtPct = (num) => Number(num || 0).toFixed(2) + '%';
 
-/* Tab Navigation */
+const tooltipEl = document.getElementById('chartTooltip');
+function showTooltip(x, y, html) {{
+  tooltipEl.innerHTML = html;
+  tooltipEl.style.left = (x + 15) + 'px';
+  tooltipEl.style.top = (y - 20) + 'px';
+  tooltipEl.style.opacity = '1';
+}}
+function hideTooltip() {{
+  tooltipEl.style.opacity = '0';
+}}
+
+function getThemeColors() {{
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return {{
+    isDark,
+    text: isDark ? '#9CA3AF' : '#475569',
+    textLight: isDark ? '#E5E7EB' : '#1E293B',
+    grid: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)',
+    primary: '#3B82F6',
+    primaryGradStart: 'rgba(59, 130, 246, 0.35)',
+    primaryGradEnd: 'rgba(59, 130, 246, 0.0)',
+    emerald: '#10B981',
+    amber: '#F59E0B',
+    purple: '#8B5CF6',
+    rose: '#F43F5E',
+    cyan: '#06B6D4'
+  }};
+}}
+
+function initCanvas(canvas) {{
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.resetTransform && ctx.resetTransform();
+  ctx.scale(dpr, dpr);
+  return {{ ctx, width: rect.width, height: rect.height }};
+}}
+
+/* =============================================================================
+   CHART RENDERERS (100% Native, Offline-Ready, No External CDN Required)
+   ============================================================================= */
+
+// 1. Monthly Revenue & Revenue LM Line Trend
+function renderMonthlyTrend(data) {{
+  const canvas = document.getElementById('monthlyTrendCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const monthly = {{}};
+  data.forEach(d => {{
+    const m = (d.OrderDate || '').substring(0, 7);
+    if (!m) return;
+    if (!monthly[m]) monthly[m] = {{ rev: 0, profit: 0 }};
+    monthly[m].rev += d.Sales;
+    monthly[m].profit += d.Profit;
+  }});
+
+  const months = Object.keys(monthly).sort();
+  if (!months.length) return;
+
+  const revs = months.map(m => monthly[m].rev);
+  const revLMs = months.map((m, idx) => idx === 0 ? null : monthly[months[idx-1]].rev);
+
+  const padL = 60, padR = 24, padT = 28, padB = 40;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+
+  const maxVal = Math.max(...revs, ...(revLMs.filter(v=>v!==null)), 1000) * 1.15;
+
+  // Grid lines & Y-ticks
+  ctx.strokeStyle = colors.grid;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = colors.text;
+  ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign = 'right';
+
+  const steps = 4;
+  for (let i = 0; i <= steps; i++) {{
+    const yVal = (maxVal / steps) * i;
+    const yPos = padT + chartH - (i / steps) * chartH;
+    ctx.beginPath();
+    ctx.moveTo(padL, yPos);
+    ctx.lineTo(width - padR, yPos);
+    ctx.stroke();
+    ctx.fillText('$' + (yVal >= 1000 ? (yVal/1000).toFixed(0) + 'k' : yVal.toFixed(0)), padL - 8, yPos + 3);
+  }}
+
+  // X-ticks
+  ctx.textAlign = 'center';
+  const xStep = chartW / Math.max(months.length - 1, 1);
+  const points = [];
+
+  months.forEach((m, idx) => {{
+    const x = padL + idx * xStep;
+    const y = padT + chartH - (revs[idx] / maxVal) * chartH;
+    points.push({{ x, y, rev: revs[idx], revLM: revLMs[idx], month: m }});
+    
+    // Label alternate or quarterly ticks if too crowded
+    if (months.length <= 12 || idx % 2 === 0 || idx === months.length - 1) {{
+      const shortM = m.substring(2); // '24-01'
+      ctx.fillText(shortM, x, height - padB + 16);
+    }}
+  }});
+
+  // Revenue Area Gradient Fill
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+  grad.addColorStop(0, colors.primaryGradStart);
+  grad.addColorStop(1, colors.primaryGradEnd);
+
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, padT + chartH);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length - 1].x, padT + chartH);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Revenue LM Dashed Line
+  ctx.save();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = colors.emerald;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  let firstLM = true;
+  points.forEach(p => {{
+    if (p.revLM !== null) {{
+      const yLM = padT + chartH - (p.revLM / maxVal) * chartH;
+      if (firstLM) {{
+        ctx.moveTo(p.x, yLM);
+        firstLM = false;
+      }} else {{
+        ctx.lineTo(p.x, yLM);
+      }}
+    }}
+  }});
+  ctx.stroke();
+  ctx.restore();
+
+  // Revenue Main Line
+  ctx.strokeStyle = colors.primary;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  points.forEach((p, idx) => {{
+    if (idx === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }});
+  ctx.stroke();
+
+  // Points
+  points.forEach(p => {{
+    ctx.fillStyle = colors.primary;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }});
+
+  // Tooltip Interaction
+  canvas.onmousemove = (e) => {{
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    let closest = null;
+    let minD = 25;
+    points.forEach(p => {{
+      const d = Math.abs(p.x - mouseX);
+      if (d < minD) {{
+        minD = d;
+        closest = p;
+      }}
+    }});
+
+    if (closest) {{
+      const momText = closest.revLM ? (((closest.rev - closest.revLM) / closest.revLM) * 100).toFixed(1) + '%' : 'N/A';
+      const momColor = closest.rev >= (closest.revLM || 0) ? colors.emerald : colors.rose;
+      showTooltip(e.pageX, e.pageY, `
+        <strong>${{closest.month}}</strong><br/>
+        Revenue: <span style="color:${{colors.primary}}">${{fmtCur(closest.rev)}}</span><br/>
+        Revenue LM: <span style="color:${{colors.emerald}}">${{closest.revLM ? fmtCur(closest.revLM) : 'N/A'}}</span><br/>
+        MoM Growth: <span style="color:${{momColor}}">${{momText}}</span>
+      `);
+    }} else {{
+      hideTooltip();
+    }}
+  }};
+  canvas.onmouseleave = hideTooltip;
+}}
+
+// 2. Revenue Share by Category Donut Chart
+function renderCategoryDonut(data) {{
+  const canvas = document.getElementById('categoryDonutCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const catRev = {{ 'Furniture': 0, 'Technology': 0, 'Office Supplies': 0 }};
+  data.forEach(d => {{
+    if (catRev[d.Category] !== undefined) catRev[d.Category] += d.Sales;
+  }});
+
+  const total = Object.values(catRev).reduce((a,b)=>a+b, 0) || 1;
+  const slices = [
+    {{ name: 'Technology', val: catRev['Technology'], color: colors.primary }},
+    {{ name: 'Office Supplies', val: catRev['Office Supplies'], color: colors.emerald }},
+    {{ name: 'Furniture', val: catRev['Furniture'], color: colors.amber }}
+  ];
+
+  const cx = width / 2;
+  const cy = height / 2;
+  const radius = Math.min(cx, cy) - 14;
+  const innerRadius = radius * 0.65;
+
+  let startAngle = -Math.PI / 2;
+  slices.forEach(s => {{
+    const sliceAngle = (s.val / total) * Math.PI * 2;
+    s.start = startAngle;
+    s.end = startAngle + sliceAngle;
+    s.pct = (s.val / total) * 100;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, s.start, s.end);
+    ctx.arc(cx, cy, innerRadius, s.end, s.start, true);
+    ctx.closePath();
+    ctx.fillStyle = s.color;
+    ctx.fill();
+
+    startAngle += sliceAngle;
+  }});
+
+  // Center text
+  ctx.fillStyle = colors.textLight;
+  ctx.font = 'bold 13px ' + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign = 'center';
+  ctx.fillText('Categories', cx, cy - 4);
+  ctx.fillStyle = colors.text;
+  ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillText('100% Split', cx, cy + 12);
+
+  // Legend HTML
+  const legContainer = document.getElementById('categoryLegend');
+  legContainer.innerHTML = slices.map(s => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${{s.color}};"></div>
+      <span>${{s.name}}: <strong>${{s.pct.toFixed(1)}}%</strong></span>
+    </div>
+  `).join('');
+
+  canvas.onmousemove = (e) => {{
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left - cx;
+    const my = e.clientY - rect.top - cy;
+    const dist = Math.sqrt(mx * mx + my * my);
+    if (dist >= innerRadius && dist <= radius) {{
+      let angle = Math.atan2(my, mx);
+      if (angle < -Math.PI / 2) angle += Math.PI * 2;
+      const found = slices.find(s => angle >= s.start && angle < s.end);
+      if (found) {{
+        showTooltip(e.pageX, e.pageY, `<strong>${{found.name}}</strong><br/>Revenue: ${{fmtCur(found.val)}} (${{found.pct.toFixed(1)}}%)`);
+        return;
+      }}
+    }}
+    hideTooltip();
+  }};
+  canvas.onmouseleave = hideTooltip;
+}}
+
+// 3. Regional Revenue & Profit Clustered Bar
+function renderRegionBar(data) {{
+  const canvas = document.getElementById('regionBarCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const regData = {{ 'East': {{ rev: 0, profit: 0 }}, 'North': {{ rev: 0, profit: 0 }}, 'South': {{ rev: 0, profit: 0 }}, 'West': {{ rev: 0, profit: 0 }} }};
+  data.forEach(d => {{
+    if (regData[d.Region]) {{
+      regData[d.Region].rev += d.Sales;
+      regData[d.Region].profit += d.Profit;
+    }}
+  }});
+
+  const regions = Object.keys(regData);
+  const maxVal = Math.max(...regions.map(r => Math.max(regData[r].rev, regData[r].profit)), 1000) * 1.15;
+
+  const padL = 60, padR = 24, padT = 24, padB = 36;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+
+  // Gridlines
+  ctx.strokeStyle = colors.grid;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = colors.text;
+  ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign = 'right';
+
+  const steps = 4;
+  for (let i = 0; i <= steps; i++) {{
+    const yVal = (maxVal / steps) * i;
+    const yPos = padT + chartH - (i / steps) * chartH;
+    ctx.beginPath();
+    ctx.moveTo(padL, yPos);
+    ctx.lineTo(width - padR, yPos);
+    ctx.stroke();
+    ctx.fillText('$' + (yVal >= 1000000 ? (yVal/1000000).toFixed(1) + 'M' : (yVal/1000).toFixed(0) + 'k'), padL - 8, yPos + 3);
+  }}
+
+  const groupW = chartW / regions.length;
+  const barW = Math.min(groupW * 0.32, 34);
+  const gap = 4;
+  const hoverBoxes = [];
+
+  regions.forEach((r, idx) => {{
+    const gCenter = padL + idx * groupW + groupW / 2;
+    const rX = gCenter - barW - gap/2;
+    const pX = gCenter + gap/2;
+
+    const rH = (regData[r].rev / maxVal) * chartH;
+    const pH = (regData[r].profit / maxVal) * chartH;
+
+    const rY = padT + chartH - rH;
+    const pY = padT + chartH - pH;
+
+    // Revenue Bar (Blue)
+    ctx.fillStyle = colors.primary;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(rX, rY, barW, rH, [4, 4, 0, 0]) : ctx.rect(rX, rY, barW, rH);
+    ctx.fill();
+
+    // Profit Bar (Emerald)
+    ctx.fillStyle = colors.emerald;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(pX, pY, barW, pH, [4, 4, 0, 0]) : ctx.rect(pX, pY, barW, pH);
+    ctx.fill();
+
+    // X-label
+    ctx.fillStyle = colors.textLight;
+    ctx.font = 'bold 11px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'center';
+    ctx.fillText(r, gCenter, height - padB + 16);
+
+    hoverBoxes.push({{ x1: rX, x2: pX + barW, y: Math.min(rY, pY), r, rev: regData[r].rev, profit: regData[r].profit }});
+  }});
+
+  canvas.onmousemove = (e) => {{
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const found = hoverBoxes.find(b => mx >= b.x1 - 10 && mx <= b.x2 + 10);
+    if (found) {{
+      const margin = (found.profit / found.rev) * 100;
+      showTooltip(e.pageX, e.pageY, `
+        <strong>${{found.r}} Region</strong><br/>
+        Revenue: <span style="color:${{colors.primary}}">${{fmtCur(found.rev)}}</span><br/>
+        Profit: <span style="color:${{colors.emerald}}">${{fmtCur(found.profit)}}</span><br/>
+        Margin: <strong>${{margin.toFixed(2)}}%</strong>
+      `);
+    }} else {{
+      hideTooltip();
+    }}
+  }};
+  canvas.onmouseleave = hideTooltip;
+}}
+
+// 4. Top Products RANKX Horizontal Bar Chart
+function renderProductRank(data) {{
+  const canvas = document.getElementById('productRankCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const prodRev = {{}};
+  data.forEach(d => prodRev[d.Product] = (prodRev[d.Product] || 0) + d.Sales);
+  const prods = Object.entries(prodRev).sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  if (!prods.length) return;
+
+  const maxVal = prods[0][1] * 1.12;
+  const padL = 110, padR = 60, padT = 16, padB = 16;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+  const barH = chartH / prods.length;
+
+  const hoverRows = [];
+
+  prods.forEach(([name, rev], idx) => {{
+    const y = padT + idx * barH;
+    const bW = (rev / maxVal) * chartW;
+
+    // Label
+    ctx.fillStyle = colors.textLight;
+    ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'right';
+    ctx.fillText(`#${{idx+1}} ${{name}}`, padL - 10, y + barH/2 + 4);
+
+    // Bar background track
+    ctx.fillStyle = colors.grid;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(padL, y + 4, chartW, barH - 8, 4) : ctx.rect(padL, y + 4, chartW, barH - 8);
+    ctx.fill();
+
+    // Bar
+    ctx.fillStyle = colors.purple;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(padL, y + 4, bW, barH - 8, 4) : ctx.rect(padL, y + 4, bW, barH - 8);
+    ctx.fill();
+
+    // Value text
+    ctx.fillStyle = colors.text;
+    ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'left';
+    ctx.fillText('$' + (rev >= 1000 ? (rev/1000).toFixed(0) + 'k' : rev.toFixed(0)), padL + bW + 8, y + barH/2 + 4);
+
+    hoverRows.push({{ y, h: barH, name, rev, rank: idx+1 }});
+  }});
+
+  canvas.onmousemove = (e) => {{
+    const rect = canvas.getBoundingClientRect();
+    const my = e.clientY - rect.top;
+    const found = hoverRows.find(r => my >= r.y && my <= r.y + r.h);
+    if (found) {{
+      showTooltip(e.pageX, e.pageY, `<strong>#${{found.rank}} ${{found.name}}</strong><br/>Revenue: ${{fmtCur(found.rev)}}`);
+    }} else {{
+      hideTooltip();
+    }}
+  }};
+  canvas.onmouseleave = hideTooltip;
+}}
+
+// 5. Discount vs Margin Scatter / Bubble Plot
+function renderDiscountScatter(data) {{
+  const canvas = document.getElementById('discountScatterCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const pAgg = {{}};
+  data.forEach(d => {{
+    if (!pAgg[d.Product]) pAgg[d.Product] = {{ product: d.Product, cat: d.Category, sales: 0, profit: 0, discs: [] }};
+    pAgg[d.Product].sales += d.Sales;
+    pAgg[d.Product].profit += d.Profit;
+    pAgg[d.Product].discs.push(d.Discount);
+  }});
+
+  const prods = Object.values(pAgg).map(p => ({{
+    ...p,
+    avgDisc: (p.discs.reduce((a,b)=>a+b,0) / p.discs.length) * 100,
+    marginPct: (p.profit / p.sales) * 100
+  }}));
+
+  if (!prods.length) return;
+
+  const padL = 46, padR = 24, padT = 24, padB = 40;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+
+  const minX = 0, maxX = 12;
+  const minY = 10, maxY = 35;
+
+  // Gridlines
+  ctx.strokeStyle = colors.grid;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = colors.text;
+  ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+
+  // Y-ticks
+  ctx.textAlign = 'right';
+  for (let yVal = 10; yVal <= 35; yVal += 5) {{
+    const yPos = padT + chartH - ((yVal - minY) / (maxY - minY)) * chartH;
+    ctx.beginPath();
+    ctx.moveTo(padL, yPos);
+    ctx.lineTo(width - padR, yPos);
+    ctx.stroke();
+    ctx.fillText(yVal + '%', padL - 6, yPos + 3);
+  }}
+
+  // X-ticks
+  ctx.textAlign = 'center';
+  for (let xVal = 0; xVal <= 12; xVal += 2) {{
+    const xPos = padL + ((xVal - minX) / (maxX - minX)) * chartW;
+    ctx.beginPath();
+    ctx.moveTo(xPos, padT);
+    ctx.lineTo(xPos, padT + chartH);
+    ctx.stroke();
+    ctx.fillText(xVal + '%', xPos, height - padB + 16);
+  }}
+
+  // Target Margin Line (25%)
+  const targetY = padT + chartH - ((25 - minY) / (maxY - minY)) * chartH;
+  ctx.strokeStyle = colors.rose;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(padL, targetY);
+  ctx.lineTo(width - padR, targetY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Bubbles
+  const maxSales = Math.max(...prods.map(p => p.sales), 1);
+  const bubbles = [];
+
+  prods.forEach(p => {{
+    const cx = padL + Math.max(0, Math.min(chartW, ((p.avgDisc - minX) / (maxX - minX)) * chartW));
+    const cy = padT + chartH - Math.max(0, Math.min(chartH, ((p.marginPct - minY) / (maxY - minY)) * chartH));
+    const r = Math.max(6, Math.min(22, (p.sales / maxSales) * 22));
+
+    const color = p.cat === 'Technology' ? colors.primary : p.cat === 'Office Supplies' ? colors.emerald : colors.amber;
+
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1.0;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    bubbles.push({{ cx, cy, r, p }});
+  }});
+
+  canvas.onmousemove = (e) => {{
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    const found = bubbles.find(b => {{
+      const dx = mx - b.cx;
+      const dy = my - b.cy;
+      return (dx * dx + dy * dy) <= (b.r + 4) * (b.r + 4);
+    }});
+
+    if (found) {{
+      showTooltip(e.pageX, e.pageY, `
+        <strong>${{found.p.product}}</strong> (${{found.p.cat}})<br/>
+        Avg Discount: <strong>${{found.p.avgDisc.toFixed(1)}}%</strong><br/>
+        Profit Margin: <strong>${{found.p.marginPct.toFixed(1)}}%</strong><br/>
+        Revenue: ${{fmtCur(found.p.sales)}}
+      `);
+    }} else {{
+      hideTooltip();
+    }}
+  }};
+  canvas.onmouseleave = hideTooltip;
+}}
+
+// 6. Ship Mode Efficiency Combo Chart
+function renderShipModeChart(data) {{
+  const canvas = document.getElementById('shipModeCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const shipModes = ['Standard Class', 'Second Class', 'First Class', 'Same Day'];
+  const modeData = shipModes.map(m => {{
+    const subset = data.filter(d => d.ShipMode === m);
+    return {{
+      mode: m,
+      count: subset.length,
+      days: subset.length ? subset.reduce((a,b)=>a+b.ShippingDays,0)/subset.length : 0
+    }};
+  }});
+
+  const padL = 46, padR = 46, padT = 20, padB = 34;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+  const maxCount = Math.max(...modeData.map(m => m.count), 10) * 1.2;
+
+  const stepW = chartW / modeData.length;
+  const barW = stepW * 0.45;
+
+  // Gridlines
+  ctx.strokeStyle = colors.grid;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT + chartH);
+  ctx.lineTo(width - padR, padT + chartH);
+  ctx.stroke();
+
+  modeData.forEach((m, idx) => {{
+    const cx = padL + idx * stepW + stepW / 2;
+    const bH = (m.count / maxCount) * chartH;
+    const bY = padT + chartH - bH;
+
+    // Bar
+    ctx.fillStyle = colors.cyan;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(cx - barW/2, bY, barW, bH, [4, 4, 0, 0]) : ctx.rect(cx - barW/2, bY, barW, bH);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = colors.text;
+    ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'center';
+    ctx.fillText(m.mode.replace(' Class', ''), cx, height - padB + 16);
+  }});
+}}
+
+// 7. Regional Margin Index
+function renderRegionalMarginChart(data) {{
+  const canvas = document.getElementById('regionalMarginCanvas');
+  if (!canvas) return;
+  const {{ ctx, width, height }} = initCanvas(canvas);
+  const colors = getThemeColors();
+
+  const regAgg = {{}};
+  data.forEach(d => {{
+    if (!regAgg[d.Region]) regAgg[d.Region] = {{ rev: 0, profit: 0 }};
+    regAgg[d.Region].rev += d.Sales;
+    regAgg[d.Region].profit += d.Profit;
+  }});
+
+  const rNames = Object.keys(regAgg);
+  const rMargins = rNames.map(r => (regAgg[r].profit / (regAgg[r].rev || 1)) * 100);
+
+  const padL = 46, padR = 24, padT = 20, padB = 34;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+  const maxMargin = 35;
+
+  const stepW = chartW / rNames.length;
+  const barW = stepW * 0.45;
+
+  rNames.forEach((r, idx) => {{
+    const cx = padL + idx * stepW + stepW / 2;
+    const m = rMargins[idx];
+    const bH = (m / maxMargin) * chartH;
+    const bY = padT + chartH - bH;
+
+    ctx.fillStyle = colors.emerald;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(cx - barW/2, bY, barW, bH, [4, 4, 0, 0]) : ctx.rect(cx - barW/2, bY, barW, bH);
+    ctx.fill();
+
+    ctx.fillStyle = colors.text;
+    ctx.font = 'bold 10px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'center';
+    ctx.fillText(m.toFixed(1) + '%', cx, bY - 6);
+    ctx.fillText(r, cx, height - padB + 16);
+  }});
+}}
+
+/* =============================================================================
+   TABLES & KPI CONTROLLERS
+   ============================================================================= */
+
+function renderTopOrdersTable(data) {{
+  const sorted = [...data].sort((a,b) => b.Sales - a.Sales).slice(0, 10);
+  const tbody = document.querySelector('#topOrdersTable tbody');
+  if (!tbody) return;
+  tbody.innerHTML = sorted.map(o => `
+    <tr>
+      <td style="font-family:var(--font-mono); font-weight:600; color:var(--primary);">${{o.OrderID}}</td>
+      <td>${{o.OrderDate}}</td>
+      <td style="font-weight:600;">${{o.CustomerName}}</td>
+      <td>${{o.Product}}</td>
+      <td class="num-cell" style="font-weight:700;">${{fmtCur(o.Sales)}}</td>
+      <td class="num-cell" style="color:var(--accent-emerald); font-weight:600;">${{fmtCur(o.Profit)}}</td>
+    </tr>
+  `).join('');
+}}
+
+function renderProductMatrixTable(data) {{
+  const pAgg = {{}};
+  data.forEach(d => {{
+    if (!pAgg[d.Product]) pAgg[d.Product] = {{ product: d.Product, category: d.Category, units: 0, sales: 0, profit: 0, discs: [] }};
+    pAgg[d.Product].units += d.Quantity;
+    pAgg[d.Product].sales += d.Sales;
+    pAgg[d.Product].profit += d.Profit;
+    pAgg[d.Product].discs.push(d.Discount);
+  }});
+
+  const prods = Object.values(pAgg).map(p => ({{
+    ...p,
+    avgDiscount: (p.discs.reduce((a,b)=>a+b,0) / p.discs.length) * 100,
+    marginPct: (p.profit / p.sales) * 100
+  }})).sort((a,b) => b.sales - a.sales);
+
+  const maxSales = Math.max(...prods.map(p => p.sales), 1);
+  const tbody = document.querySelector('#productMatrixTable tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = prods.map(p => {{
+    const barWidth = ((p.sales / maxSales) * 100).toFixed(0);
+    const catClass = p.category === 'Technology' ? 'cat-tech' : p.category === 'Office Supplies' ? 'cat-office' : 'cat-furniture';
+    const marginClass = p.marginPct >= 28 ? 'margin-high' : p.marginPct >= 22 ? 'margin-med' : 'margin-low';
+
+    return `
+      <tr>
+        <td style="font-weight:700;">${{p.product}}</td>
+        <td><span class="category-pill ${{catClass}}">${{p.category}}</span></td>
+        <td class="num-cell">${{fmtInt(p.units)}}</td>
+        <td class="num-cell">
+          <div class="data-bar-wrapper">
+            <span>${{fmtCur(p.sales)}}</span>
+            <div class="data-bar-container"><div class="data-bar-fill" style="width:${{barWidth}}%;"></div></div>
+          </div>
+        </td>
+        <td class="num-cell" style="font-weight:600; color:var(--accent-emerald);">${{fmtCur(p.profit)}}</td>
+        <td class="num-cell">${{fmtPct(p.avgDiscount)}}</td>
+        <td class="num-cell"><span class="margin-tag ${{marginClass}}">${{fmtPct(p.marginPct)}}</span></td>
+      </tr>
+    `;
+  }}).join('');
+}}
+
+function renderCustomerAccountsTable(data) {{
+  const cAgg = {{}};
+  data.forEach(d => {{
+    if (!cAgg[d.CustomerID]) {{
+      cAgg[d.CustomerID] = {{ id: d.CustomerID, name: d.CustomerName, region: d.Region, orders: 0, units: 0, sales: 0, profit: 0 }};
+    }}
+    cAgg[d.CustomerID].orders += 1;
+    cAgg[d.CustomerID].units += d.Quantity;
+    cAgg[d.CustomerID].sales += d.Sales;
+    cAgg[d.CustomerID].profit += d.Profit;
+  }});
+
+  const sortedCust = Object.values(cAgg).sort((a,b) => b.sales - a.sales);
+  const tbody = document.querySelector('#customerAccountsTable tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = sortedCust.map(c => {{
+    const tier = c.sales >= 45000 ? '<span class="kpi-badge" style="background:rgba(245,158,11,0.15); color:#F59E0B;">🌟 Platinum</span>' :
+                 c.sales >= 30000 ? '<span class="kpi-badge" style="background:rgba(59,130,246,0.15); color:#3B82F6;">🥇 Gold</span>' :
+                                    '<span class="kpi-badge">🥈 Silver</span>';
+    return `
+      <tr>
+        <td style="font-family:var(--font-mono); font-weight:600; color:var(--primary);">${{c.id}}</td>
+        <td style="font-weight:600;">${{c.name}}</td>
+        <td>${{c.region}}</td>
+        <td class="num-cell">${{fmtInt(c.orders)}}</td>
+        <td class="num-cell">${{fmtInt(c.units)}}</td>
+        <td class="num-cell" style="font-weight:700;">${{fmtCur(c.sales)}}</td>
+        <td class="num-cell" style="font-weight:600; color:var(--accent-emerald);">${{fmtCur(c.profit)}}</td>
+        <td class="num-cell">${{tier}}</td>
+      </tr>
+    `;
+  }}).join('');
+}}
+
+/* Tab Switching */
 document.querySelectorAll('.tab-btn').forEach(btn => {{
   btn.addEventListener('click', () => {{
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1144,23 +1939,22 @@ document.querySelectorAll('.tab-btn').forEach(btn => {{
     const page = document.getElementById(btn.dataset.tab);
     if (page) {{
       page.classList.add('active');
-      // Resize charts when tab becomes visible
-      Object.values(charts).forEach(c => c && c.resize && c.resize());
+      renderDashboard();
     }}
   }});
 }});
 
-/* Theme Switcher */
+/* Theme Switching */
 const themeBtn = document.getElementById('themeToggleBtn');
 themeBtn.addEventListener('click', () => {{
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   themeBtn.textContent = next === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-  updateAllCharts();
+  renderDashboard();
 }});
 
-/* Slicer Event Listeners */
+/* Slicer Filtering */
 ['slicerRegion', 'slicerCategory', 'slicerYear', 'slicerShipMode'].forEach(id => {{
   document.getElementById(id).addEventListener('change', applyFilters);
 }});
@@ -1172,6 +1966,26 @@ document.getElementById('resetSlicersBtn').addEventListener('click', () => {{
   document.getElementById('slicerShipMode').value = 'All';
   applyFilters();
 }});
+
+function applyFilters() {{
+  state.region = document.getElementById('slicerRegion').value;
+  state.category = document.getElementById('slicerCategory').value;
+  state.year = document.getElementById('slicerYear').value;
+  state.shipMode = document.getElementById('slicerShipMode').value;
+
+  state.filteredData = rawData.filter(d => {{
+    if (state.region !== 'All' && d.Region !== state.region) return false;
+    if (state.category !== 'All' && d.Category !== state.category) return false;
+    if (state.shipMode !== 'All' && d.ShipMode !== state.shipMode) return false;
+    if (state.year !== 'All') {{
+      const y = (d.OrderDate || '').substring(0, 4);
+      if (y !== state.year) return false;
+    }}
+    return true;
+  }});
+
+  renderDashboard();
+}}
 
 /* CSV Export */
 document.getElementById('exportCsvBtn').addEventListener('click', () => {{
@@ -1195,28 +2009,7 @@ function copyDax(btn, text) {{
   setTimeout(() => btn.textContent = orig, 1500);
 }}
 
-/* Filter Logic */
-function applyFilters() {{
-  state.region = document.getElementById('slicerRegion').value;
-  state.category = document.getElementById('slicerCategory').value;
-  state.year = document.getElementById('slicerYear').value;
-  state.shipMode = document.getElementById('slicerShipMode').value;
-
-  state.filteredData = rawData.filter(d => {{
-    if (state.region !== 'All' && d.Region !== state.region) return false;
-    if (state.category !== 'All' && d.Category !== state.category) return false;
-    if (state.shipMode !== 'All' && d.ShipMode !== state.shipMode) return false;
-    if (state.year !== 'All') {{
-      const y = (d.OrderDate || '').substring(0, 4);
-      if (y !== state.year) return false;
-    }}
-    return true;
-  }});
-
-  renderDashboard();
-}}
-
-/* Main Render Controller */
+/* Main Render Controller with Safe Wrappers */
 function renderDashboard() {{
   const data = state.filteredData;
   const totalRev = data.reduce((s, d) => s + (d.Sales || 0), 0);
@@ -1257,406 +2050,22 @@ function renderDashboard() {{
   document.getElementById('kpiAvgShipDays').textContent = avgShipDays.toFixed(1) + ' d';
   document.getElementById('kpiCustAvgSpend').textContent = fmtCur(totalRev / totalCust);
 
-  // Render Charts & Tables
-  renderOverviewCharts(data);
-  renderProductPerformance(data);
-  renderCustomerDetail(data);
+  // Safe visual executions
+  try {{ renderMonthlyTrend(data); }} catch(e) {{ console.error("MonthlyTrend error:", e); }}
+  try {{ renderCategoryDonut(data); }} catch(e) {{ console.error("CategoryDonut error:", e); }}
+  try {{ renderRegionBar(data); }} catch(e) {{ console.error("RegionBar error:", e); }}
+  try {{ renderTopOrdersTable(data); }} catch(e) {{ console.error("TopOrdersTable error:", e); }}
+  try {{ renderProductRank(data); }} catch(e) {{ console.error("ProductRank error:", e); }}
+  try {{ renderDiscountScatter(data); }} catch(e) {{ console.error("DiscountScatter error:", e); }}
+  try {{ renderProductMatrixTable(data); }} catch(e) {{ console.error("ProductMatrixTable error:", e); }}
+  try {{ renderShipModeChart(data); }} catch(e) {{ console.error("ShipModeChart error:", e); }}
+  try {{ renderRegionalMarginChart(data); }} catch(e) {{ console.error("RegionalMarginChart error:", e); }}
+  try {{ renderCustomerAccountsTable(data); }} catch(e) {{ console.error("CustomerAccountsTable error:", e); }}
 }}
 
-function getChartColors() {{
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  return {{
-    text: isDark ? '#9CA3AF' : '#475569',
-    grid: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.06)',
-    primary: '#3B82F6',
-    emerald: '#10B981',
-    amber: '#F59E0B',
-    purple: '#8B5CF6',
-    rose: '#F43F5E',
-    cyan: '#06B6D4'
-  }};
-}}
+window.addEventListener('resize', renderDashboard);
 
-/* Overview Charts */
-function renderOverviewCharts(data) {{
-  const colors = getChartColors();
-
-  // 1. Monthly Revenue & Revenue LM Trend
-  const monthly = {{}};
-  data.forEach(d => {{
-    const m = (d.OrderDate || '').substring(0, 7);
-    if (!m) return;
-    if (!monthly[m]) monthly[m] = {{ rev: 0, profit: 0 }};
-    monthly[m].rev += d.Sales;
-    monthly[m].profit += d.Profit;
-  }});
-
-  const months = Object.keys(monthly).sort();
-  const revSeries = months.map(m => monthly[m].rev);
-  const revLMSeries = months.map((m, idx) => idx === 0 ? null : monthly[months[idx-1]].rev);
-
-  if (charts.monthlyTrend) charts.monthlyTrend.destroy();
-  const ctxTrend = document.getElementById('monthlyTrendChart').getContext('2d');
-  charts.monthlyTrend = new Chart(ctxTrend, {{
-    type: 'line',
-    data: {{
-      labels: months,
-      datasets: [
-        {{
-          label: 'Total Revenue ($)',
-          data: revSeries,
-          borderColor: colors.primary,
-          backgroundColor: 'rgba(59, 130, 246, 0.12)',
-          fill: true,
-          tension: 0.35,
-          borderWidth: 3,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        }},
-        {{
-          label: 'Revenue LM (Prior Month)',
-          data: revLMSeries,
-          borderColor: colors.emerald,
-          borderDash: [5, 5],
-          tension: 0.35,
-          borderWidth: 2,
-          pointRadius: 0
-        }}
-      ]
-    }},
-    options: {{
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {{ mode: 'index', intersect: false }},
-      scales: {{
-        x: {{ grid: {{ color: colors.grid }}, ticks: {{ color: colors.text, font: {{ size: 11 }} }} }},
-        y: {{ grid: {{ color: colors.grid }}, ticks: {{ color: colors.text, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) }} }}
-      }},
-      plugins: {{
-        legend: {{ labels: {{ color: colors.text, font: {{ weight: 600 }} }} }},
-        tooltip: {{ callbacks: {{ label: c => c.dataset.label + ': ' + fmtCur(c.parsed.y) }} }}
-      }}
-    }}
-  }});
-
-  // 2. Category Donut
-  const catRev = {{ 'Furniture': 0, 'Technology': 0, 'Office Supplies': 0 }};
-  data.forEach(d => {{ if (catRev[d.Category] !== undefined) catRev[d.Category] += d.Sales; }});
-  
-  if (charts.categoryDonut) charts.categoryDonut.destroy();
-  const ctxCat = document.getElementById('categoryDonutChart').getContext('2d');
-  charts.categoryDonut = new Chart(ctxCat, {{
-    type: 'doughnut',
-    data: {{
-      labels: ['Furniture', 'Technology', 'Office Supplies'],
-      datasets: [{{
-        data: [catRev['Furniture'], catRev['Technology'], catRev['Office Supplies']],
-        backgroundColor: [colors.amber, colors.primary, colors.emerald],
-        borderWidth: 0,
-        hoverOffset: 6
-      }}]
-    }},
-    options: {{
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '68%',
-      plugins: {{
-        legend: {{ position: 'bottom', labels: {{ color: colors.text, font: {{ weight: 600, size: 12 }}, padding: 14 }} }},
-        tooltip: {{ callbacks: {{ label: c => c.label + ': ' + fmtCur(c.parsed) }} }}
-      }}
-    }}
-  }});
-
-  // 3. Regional Bar
-  const regData = {{ 'North': {{ rev: 0, profit: 0 }}, 'South': {{ rev: 0, profit: 0 }}, 'East': {{ rev: 0, profit: 0 }}, 'West': {{ rev: 0, profit: 0 }} }};
-  data.forEach(d => {{
-    if (regData[d.Region]) {{
-      regData[d.Region].rev += d.Sales;
-      regData[d.Region].profit += d.Profit;
-    }}
-  }});
-
-  const regLabels = Object.keys(regData);
-  if (charts.regionBar) charts.regionBar.destroy();
-  const ctxReg = document.getElementById('regionBarChart').getContext('2d');
-  charts.regionBar = new Chart(ctxReg, {{
-    type: 'bar',
-    data: {{
-      labels: regLabels,
-      datasets: [
-        {{ label: 'Revenue ($)', data: regLabels.map(r => regData[r].rev), backgroundColor: colors.primary, borderRadius: 6 }},
-        {{ label: 'Profit ($)', data: regLabels.map(r => regData[r].profit), backgroundColor: colors.emerald, borderRadius: 6 }}
-      ]
-    }},
-    options: {{
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {{
-        x: {{ grid: {{ display: false }}, ticks: {{ color: colors.text, font: {{ weight: 600 }} }} }},
-        y: {{ grid: {{ color: colors.grid }}, ticks: {{ color: colors.text, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) }} }}
-      }},
-      plugins: {{
-        legend: {{ labels: {{ color: colors.text }} }},
-        tooltip: {{ callbacks: {{ label: c => c.dataset.label + ': ' + fmtCur(c.parsed.y) }} }}
-      }}
-    }}
-  }});
-
-  // 4. Top 10 Orders Table
-  const sortedOrders = [...data].sort((a,b) => b.Sales - a.Sales).slice(0, 10);
-  const tbody = document.querySelector('#topOrdersTable tbody');
-  tbody.innerHTML = sortedOrders.map(o => `
-    <tr>
-      <td style="font-family:var(--font-mono); font-weight:600; color:var(--primary);">${{o.OrderID}}</td>
-      <td>${{o.OrderDate}}</td>
-      <td>${{o.CustomerName}}</td>
-      <td>${{o.Product}}</td>
-      <td class="num-cell" style="font-weight:700;">${{fmtCur(o.Sales)}}</td>
-      <td class="num-cell" style="color:var(--accent-emerald); font-weight:600;">${{fmtCur(o.Profit)}}</td>
-    </tr>
-  `).join('');
-}}
-
-/* Page 2: Product Performance */
-function renderProductPerformance(data) {{
-  const colors = getChartColors();
-
-  // Aggregate by Product
-  const pAgg = {{}};
-  data.forEach(d => {{
-    if (!pAgg[d.Product]) {{
-      pAgg[d.Product] = {{ product: d.Product, category: d.Category, units: 0, sales: 0, profit: 0, discounts: [] }};
-    }}
-    pAgg[d.Product].units += d.Quantity;
-    pAgg[d.Product].sales += d.Sales;
-    pAgg[d.Product].profit += d.Profit;
-    pAgg[d.Product].discounts.push(d.Discount);
-  }});
-
-  const prods = Object.values(pAgg).map(p => ({{
-    ...p,
-    avgDiscount: (p.discounts.reduce((a,b)=>a+b,0) / p.discounts.length) * 100,
-    marginPct: (p.profit / p.sales) * 100
-  }})).sort((a,b) => b.sales - a.sales);
-
-  // 1. Top 10 Products Horizontal Bar (RANKX)
-  const top10 = prods.slice(0, 10);
-  if (charts.productRank) charts.productRank.destroy();
-  const ctxRank = document.getElementById('productRankChart').getContext('2d');
-  charts.productRank = new Chart(ctxRank, {{
-    type: 'bar',
-    data: {{
-      labels: top10.map((p, i) => `#${{i+1}} ${{p.product}}`),
-      datasets: [{{
-        label: 'Total Revenue ($)',
-        data: top10.map(p => p.sales),
-        backgroundColor: colors.purple,
-        borderRadius: 6
-      }}]
-    }},
-    options: {{
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {{
-        x: {{ grid: {{ color: colors.grid }}, ticks: {{ color: colors.text, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) }} }},
-        y: {{ grid: {{ display: false }}, ticks: {{ color: colors.text, font: {{ weight: 600 }} }} }}
-      }},
-      plugins: {{
-        legend: {{ display: false }},
-        tooltip: {{ callbacks: {{ label: c => fmtCur(c.parsed.x) }} }}
-      }}
-    }}
-  }});
-
-  // 2. Discount vs Margin Scatter (Bubble Chart)
-  if (charts.discountScatter) charts.discountScatter.destroy();
-  const ctxScatter = document.getElementById('discountScatterChart').getContext('2d');
-  charts.discountScatter = new Chart(ctxScatter, {{
-    type: 'bubble',
-    data: {{
-      datasets: prods.map(p => ({{
-        label: p.product,
-        data: [{{
-          x: p.avgDiscount,
-          y: p.marginPct,
-          r: Math.max(6, Math.min(22, Math.sqrt(p.sales) / 38))
-        }}],
-        backgroundColor: p.category === 'Technology' ? 'rgba(59, 130, 246, 0.7)' :
-                         p.category === 'Office Supplies' ? 'rgba(16, 185, 129, 0.7)' : 'rgba(245, 158, 11, 0.7)'
-      }}))
-    }},
-    options: {{
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {{
-        x: {{ title: {{ display: true, text: 'Average Discount %', color: colors.text }}, grid: {{ color: colors.grid }}, ticks: {{ color: colors.text }} }},
-        y: {{ title: {{ display: true, text: 'Profit Margin %', color: colors.text }}, grid: {{ color: colors.grid }}, ticks: {{ color: colors.text }} }}
-      }},
-      plugins: {{
-        legend: {{ display: false }},
-        tooltip: {{
-          callbacks: {{
-            label: (c) => `${{c.dataset.label}}: Disc ${{c.raw.x.toFixed(1)}}%, Margin ${{c.raw.y.toFixed(1)}}%`
-          }}
-        }}
-      }}
-    }}
-  }});
-
-  // 3. Product Matrix Table with Data Bars
-  const maxSales = Math.max(...prods.map(p => p.sales), 1);
-  const matrixTbody = document.querySelector('#productMatrixTable tbody');
-  matrixTbody.innerHTML = prods.map(p => {{
-    const barWidth = ((p.sales / maxSales) * 100).toFixed(0);
-    const catClass = p.category === 'Technology' ? 'cat-tech' : p.category === 'Office Supplies' ? 'cat-office' : 'cat-furniture';
-    const marginClass = p.marginPct >= 28 ? 'margin-high' : p.marginPct >= 22 ? 'margin-med' : 'margin-low';
-
-    return `
-      <tr>
-        <td style="font-weight:700;">${{p.product}}</td>
-        <td><span class="category-pill ${{catClass}}">${{p.category}}</span></td>
-        <td class="num-cell">${{fmtInt(p.units)}}</td>
-        <td class="num-cell">
-          <div class="data-bar-wrapper">
-            <span>${{fmtCur(p.sales)}}</span>
-            <div class="data-bar-container"><div class="data-bar-fill" style="width:${{barWidth}}%;"></div></div>
-          </div>
-        </td>
-        <td class="num-cell" style="font-weight:600; color:var(--accent-emerald);">${{fmtCur(p.profit)}}</td>
-        <td class="num-cell">${{fmtPct(p.avgDiscount)}}</td>
-        <td class="num-cell"><span class="margin-tag ${{marginClass}}">${{fmtPct(p.marginPct)}}</span></td>
-      </tr>
-    `;
-  }}).join('');
-}}
-
-/* Page 3: Customer & Regional Detail */
-function renderCustomerDetail(data) {{
-  const colors = getChartColors();
-
-  // 1. Ship Mode Volume & Lead Time
-  const shipModes = ['Standard Class', 'Second Class', 'First Class', 'Same Day'];
-  const shipCounts = shipModes.map(m => data.filter(d => d.ShipMode === m).length);
-  const shipDays = shipModes.map(m => {{
-    const subset = data.filter(d => d.ShipMode === m);
-    return subset.length ? subset.reduce((a,b)=>a+b.ShippingDays,0) / subset.length : 0;
-  }});
-
-  if (charts.shipMode) charts.shipMode.destroy();
-  const ctxShip = document.getElementById('shipModeChart').getContext('2d');
-  charts.shipMode = new Chart(ctxShip, {{
-    type: 'bar',
-    data: {{
-      labels: shipModes,
-      datasets: [
-        {{
-          type: 'bar',
-          label: 'Order Volume',
-          data: shipCounts,
-          backgroundColor: colors.cyan,
-          borderRadius: 6,
-          yAxisID: 'y'
-        }},
-        {{
-          type: 'line',
-          label: 'Avg Ship Days',
-          data: shipDays,
-          borderColor: colors.amber,
-          borderWidth: 3,
-          pointRadius: 5,
-          yAxisID: 'y1'
-        }}
-      ]
-    }},
-    options: {{
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {{
-        x: {{ grid: {{ display: false }}, ticks: {{ color: colors.text }} }},
-        y: {{ grid: {{ color: colors.grid }}, ticks: {{ color: colors.text }}, title: {{ display: true, text: 'Order Count', color: colors.text }} }},
-        y1: {{ position: 'right', grid: {{ display: false }}, ticks: {{ color: colors.text }}, title: {{ display: true, text: 'Days to Ship', color: colors.text }} }}
-      }},
-      plugins: {{ legend: {{ labels: {{ color: colors.text }} }} }}
-    }}
-  }});
-
-  // 2. Regional Margin Index
-  const regAgg = {{}};
-  data.forEach(d => {{
-    if (!regAgg[d.Region]) regAgg[d.Region] = {{ rev: 0, profit: 0 }};
-    regAgg[d.Region].rev += d.Sales;
-    regAgg[d.Region].profit += d.Profit;
-  }});
-
-  const rNames = Object.keys(regAgg);
-  const rMargins = rNames.map(r => (regAgg[r].profit / (regAgg[r].rev || 1)) * 100);
-
-  if (charts.regMargin) charts.regMargin.destroy();
-  const ctxRegM = document.getElementById('regionalMarginChart').getContext('2d');
-  charts.regMargin = new Chart(ctxRegM, {{
-    type: 'bar',
-    data: {{
-      labels: rNames,
-      datasets: [{{
-        label: 'Profit Margin %',
-        data: rMargins,
-        backgroundColor: [colors.primary, colors.emerald, colors.purple, colors.amber],
-        borderRadius: 6
-      }}]
-    }},
-    options: {{
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {{
-        x: {{ grid: {{ display: false }}, ticks: {{ color: colors.text, font: {{ weight: 600 }} }} }},
-        y: {{ grid: {{ color: colors.grid }}, ticks: {{ color: colors.text, callback: v => v + '%' }} }}
-      }},
-      plugins: {{
-        legend: {{ display: false }},
-        tooltip: {{ callbacks: {{ label: c => fmtPct(c.parsed.y) }} }}
-      }}
-    }}
-  }});
-
-  // 3. Customer Accounts Table
-  const cAgg = {{}};
-  data.forEach(d => {{
-    if (!cAgg[d.CustomerID]) {{
-      cAgg[d.CustomerID] = {{ id: d.CustomerID, name: d.CustomerName, region: d.Region, orders: 0, units: 0, sales: 0, profit: 0 }};
-    }}
-    cAgg[d.CustomerID].orders += 1;
-    cAgg[d.CustomerID].units += d.Quantity;
-    cAgg[d.CustomerID].sales += d.Sales;
-    cAgg[d.CustomerID].profit += d.Profit;
-  }});
-
-  const sortedCust = Object.values(cAgg).sort((a,b) => b.sales - a.sales);
-  const custTbody = document.querySelector('#customerAccountsTable tbody');
-  custTbody.innerHTML = sortedCust.map(c => {{
-    const tier = c.sales >= 45000 ? '<span class="kpi-badge" style="background:rgba(245,158,11,0.15); color:#F59E0B;">🌟 Platinum</span>' :
-                 c.sales >= 30000 ? '<span class="kpi-badge" style="background:rgba(59,130,246,0.15); color:#3B82F6;">🥇 Gold</span>' :
-                                    '<span class="kpi-badge">🥈 Silver</span>';
-    return `
-      <tr>
-        <td style="font-family:var(--font-mono); font-weight:600; color:var(--primary);">${{c.id}}</td>
-        <td style="font-weight:600;">${{c.name}}</td>
-        <td>${{c.region}}</td>
-        <td class="num-cell">${{fmtInt(c.orders)}}</td>
-        <td class="num-cell">${{fmtInt(c.units)}}</td>
-        <td class="num-cell" style="font-weight:700;">${{fmtCur(c.sales)}}</td>
-        <td class="num-cell" style="font-weight:600; color:var(--accent-emerald);">${{fmtCur(c.profit)}}</td>
-        <td class="num-cell">${{tier}}</td>
-      </tr>
-    `;
-  }}).join('');
-}}
-
-function updateAllCharts() {{
-  renderDashboard();
-}}
-
-// Initialize
+// Initial Render
 applyFilters();
 </script>
 
@@ -1665,4 +2074,4 @@ applyFilters();
 '''
 
 OUT_PATH.write_text(html_content, encoding="utf-8")
-print(f"Generated standalone Power BI Interactive Dashboard -> {OUT_PATH} (size: {len(html_content):,} bytes)")
+print(f"Compiled Standalone Native HTML Dashboard -> {OUT_PATH} (size: {len(html_content):,} bytes)")
