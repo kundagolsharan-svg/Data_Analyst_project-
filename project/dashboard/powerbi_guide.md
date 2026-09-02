@@ -88,8 +88,19 @@ RANKX(ALL(sales_data_cleaned[Product]), [Total Revenue], , DESC)
 shareable web link, or export the finished report as PDF for a quick static share.
 
 ---
-### Right now, without installing anything
-Open `business_dashboard.html` in any browser for a live, filterable dashboard
-(region/category/year slicers, KPI cards, trend line, category donut, regional bar,
-top-products bar, and a discount-vs-margin scatter) built on the same cleaned dataset —
-useful to sanity-check the numbers you should see once the Power BI version is built.
+### Interactive Dashboard Previews (business_dashboard.html)
+
+Open `business_dashboard.html` in any browser for a live, filterable dashboard built on the same cleaned dataset.
+
+#### Page 1 — Executive Overview
+![Page 1 Executive Overview](images/dashboard_page1_executive_overview.png)
+
+#### Page 2 — Product Performance
+![Page 2 Product Performance](images/dashboard_page2_product_performance.png)
+
+#### Page 3 — Customer & Regional Detail
+![Page 3 Customer & Regional Detail](images/dashboard_page3_customer_detail.png)
+
+#### Page 4 — DAX & Modeling Architecture
+![Page 4 DAX Architecture](images/dashboard_page4_dax_architecture.png)
+

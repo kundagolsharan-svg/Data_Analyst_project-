@@ -2065,8 +2065,25 @@ function renderDashboard() {{
 
 window.addEventListener('resize', renderDashboard);
 
+// Hash tab activation support for automated headless screenshot generation
+function checkHashTab() {{
+  if (window.location.hash) {{
+    const tabId = window.location.hash.replace('#', '');
+    const btn = document.querySelector(`.tab-btn[data-tab="${{tabId}}"]`);
+    if (btn) {{
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const page = document.getElementById(tabId);
+      if (page) page.classList.add('active');
+    }}
+  }}
+}}
+
 // Initial Render
 applyFilters();
+checkHashTab();
+window.addEventListener('hashchange', checkHashTab);
 </script>
 
 </body>
